@@ -1,0 +1,73 @@
+﻿@using BlazorApp.Data
+@inject FootballersService FootballersService
+
+<Button Type="primary" OnClick="@ShowModal" Style="margin-bottom:16px">
+    Edit
+</Button>
+
+@{
+    RenderFragment footer =
+    @<Template>
+                <Button OnClick="@HandleOk" Type="primary">Submit</Button>
+                <Button OnClick="@HandleCancel" Type="primary" Style="background-color:white; color:red">Cancel</Button>
+    </Template>;
+}
+
+<Modal Title="@("Editing a footballer")" Visible="@_visible" OnOk="@HandleOk" OnCancel="@HandleCancel" Footer="@footer">
+    <Form Model="@footballer" LabelColSpan="8" WrapperColSpan="16" OnFinish="OnFinish" @ref="@_form">
+        <FormItem Label="Name">
+            <Input @bind-Value="@footballer.Name" />
+        </FormItem>
+        <FormItem Label="Surname">
+            <Input @bind-Value="@footballer.Surname" />
+        </FormItem>
+        <FormItem Label="Gender">
+            <EnumRadioGroup @bind-Value="@footballer.Gender" />
+        </FormItem>
+        <FormItem Label="Birthdate">
+            <DatePicker Picker="@DatePickerType.Date" @bind-Value="@footballer.Birthdate" />
+        </FormItem>
+        <FormItem Label="Team">
+            <Input @bind-Value="@footballer.Team" />
+        </FormItem>
+        <FormItem Label="Country">
+            <Input @bind-Value="@footballer.Country" />
+        </FormItem>
+    </Form>  
+</Modal>
+
+@code {
+    [Parameter]
+    public Footballer footballer { get; set; }
+    [Parameter] 
+    public EventCallback<string> OnEditConfirmClick { get; set; }
+
+    private Form<Footballer> _form;
+    bool _visible = false;
+
+    public void ShowModal()
+    {
+        _visible = true;
+    }
+
+    private async Task HandleOk()
+    {
+        if (_form.EditContext != null && _form.EditContext.Validate())
+        {
+            var footballer = (Footballer)_form.EditContext.Model;
+            await FootballersService.Edit(footballer);
+            await OnEditConfirmClick.InvokeAsync();
+            _form.Submit();
+        }
+    }
+
+    private void HandleCancel()
+    {
+        _visible = false;
+    }
+
+    private void OnFinish(EditContext editContext)
+    {
+        _visible = false;
+    }
+}

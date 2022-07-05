@@ -1,0 +1,20 @@
+﻿@using BlazorApp.Data
+@inject FootballersService FootballersService
+
+<Popconfirm Title="Sure to delete?" OnConfirm="()=>Delete()" OkText="Yes" CancelText="No">
+    <Button style="color: red; margin-left:20px">Delete</Button>
+</Popconfirm>
+
+@code {
+    [Parameter]
+    public int footballerId { get; set; }
+    [Parameter] 
+    public EventCallback<string> OnDeleteConfirmClick { get; set; }
+
+    public async Task Delete()
+    {
+        await FootballersService.Delete(footballerId);
+        await OnDeleteConfirmClick.InvokeAsync();
+    }
+
+}

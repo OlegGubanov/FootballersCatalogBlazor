@@ -1,0 +1,58 @@
+﻿@page "/footballers"
+
+@using AntDesign.TableModels;
+@using System.Text.Json;
+@using BlazorApp.Data;
+@using System.Threading.Tasks;
+@inject FootballersService FootballersService
+@using BlazorApp.Components
+
+<h3>Footballers</h3>
+
+<AddFootballer OnAddConfirmClick="UpdateFootballers"></AddFootballer>
+
+<Table DataSource="Footballers" TItem="Footballer" RowClassName="@(_ => "editable-row")" Bordered>
+    <ChildContent Context="footballer">
+        <Column TData="string" @bind-Field="footballer.Name" DataIndex="@nameof(footballer.Name)" Sortable Filterable>
+            @footballer.Name
+        </Column>
+        <Column TData="string" @bind-Field="footballer.Surname" DataIndex="@nameof(footballer.Surname)" Sortable Filterable>
+            @footballer.Surname
+        </Column>
+        <Column TData="Gender" @bind-Field="footballer.Gender" DataIndex="@nameof(footballer.Gender)" Sortable Filterable>
+            @footballer.Gender
+        </Column>
+        <Column TData="DateTime" @bind-Field="footballer.Birthdate" DataIndex="@nameof(footballer.Birthdate)" Format="dd.MM.yyyy" Sortable Filterable>
+            @footballer.Birthdate.ToString("dd.MM.yyyy")
+        </Column>
+        <Column TData="string" @bind-Field="footballer.Team" DataIndex="@nameof(footballer.Team)" Sortable Filterable>
+            @footballer.Team
+        </Column>
+        <Column TData="string" @bind-field="footballer.Country" DataIndex="@nameof(footballer.Country)" Sortable Filterable>
+            @footballer.Country
+        </Column>
+        <ActionColumn Title="Actions">
+            <EditFootballer footballer="footballer" OnEditConfirmClick="UpdateFootballers"></EditFootballer>
+            <DeleteFootballer footballerId="footballer.Id" OnDeleteConfirmClick="UpdateFootballers"></DeleteFootballer>
+        </ActionColumn>
+    </ChildContent>
+    
+</Table>
+
+@code {
+    [Parameter]
+    public EventCallback<int> OnEditFootballerClick { get; set; }
+
+    List<Footballer> Footballers = new List<Footballer>();
+
+    public async Task UpdateFootballers()
+    {
+        Footballers = await FootballersService.GetFootballers();
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Footballers = await FootballersService.GetFootballers();
+    } 
+}
