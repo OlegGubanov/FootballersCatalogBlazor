@@ -7,10 +7,9 @@ namespace BlazorApp.Data
     {
         public DbSet<Footballer> Footballers { get; set; }
 
-        public FootballerContext(DbContextOptions<FootballerContext> options) :
-            base(options)
+        public FootballerContext(DbContextOptions<FootballerContext> options) : base(options)
         {
-            Database.EnsureCreated();
+
         }
     }
 }
