@@ -9,7 +9,7 @@
 
 <h3>Footballers</h3>
 
-<AddFootballer OnAddConfirmClick="UpdateFootballers"></AddFootballer>
+<AddFootballer OnAddConfirmClick="UpdateFootballersList"></AddFootballer>
 
 <Table DataSource="Footballers" TItem="Footballer" RowClassName="@(_ => "editable-row")" Bordered>
     <ChildContent Context="footballer">
@@ -32,27 +32,23 @@
             @footballer.Country
         </Column>
         <ActionColumn Title="Actions">
-            <EditFootballer footballer="footballer" OnEditConfirmClick="UpdateFootballers"></EditFootballer>
-            <DeleteFootballer footballerId="footballer.Id" OnDeleteConfirmClick="UpdateFootballers"></DeleteFootballer>
+            <EditFootballer footballer="footballer" OnEditConfirmClick="UpdateFootballersList"></EditFootballer>
+            <DeleteFootballer footballerId="footballer.Id" OnDeleteConfirmClick="UpdateFootballersList"></DeleteFootballer>
         </ActionColumn>
     </ChildContent>
     
 </Table>
 
 @code {
-    [Parameter]
-    public EventCallback<int> OnEditFootballerClick { get; set; }
-
     List<Footballer> Footballers = new List<Footballer>();
 
-    public async Task UpdateFootballers()
+    public async Task UpdateFootballersList()
     {
         Footballers = await FootballersService.GetFootballers();
-        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        Footballers = await FootballersService.GetFootballers();
+        await UpdateFootballersList();
     } 
 }
